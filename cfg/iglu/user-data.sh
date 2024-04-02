@@ -65,7 +65,7 @@ cd /home/ec2-user
 mkdir .ssl
 cd .ssl
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 3650 -nodes -subj \
-    "/C=US/ST=MA/L=Boston/O=patrick-cloud.com/OU=Self/CN=snowplow.patrick-cloud.com"
+    "/C=US/ST=MA/L=Boston/O=patrick-cloud.com/OU=Self/CN=snowplow-iglu.patrick-cloud.com"
 
 sudo systemctl enable nginx
 sudo systemctl start nginx
