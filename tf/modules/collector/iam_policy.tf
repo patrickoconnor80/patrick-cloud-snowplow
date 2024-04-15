@@ -1,10 +1,7 @@
-
-
 resource "aws_iam_instance_profile" "this" {
   name ="${var.prefix}-${var.name}-ec2-profile"
   role = data.aws_iam_role.snowplow_collector.name
 }
-
 
 resource "aws_iam_policy" "this" {
   name = "${var.prefix}-${var.name}-policy"

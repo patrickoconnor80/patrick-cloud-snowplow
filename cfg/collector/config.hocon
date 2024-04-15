@@ -78,6 +78,13 @@ collector {
       timeLimit = ${time_limit_ms}
     }
   }
+  monitoring.metrics.statsd {
+        enabled = true
+        hostname = localhost
+        port = 8125
+        period = "10 seconds"
+        prefix = "snowplow.collector"
+  }
 }
 akka {
   loglevel = WARNING

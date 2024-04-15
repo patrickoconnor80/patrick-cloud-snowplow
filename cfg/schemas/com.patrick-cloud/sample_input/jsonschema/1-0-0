@@ -1,0 +1,18 @@
+{
+	"$schema": "http://iglucentral.com/schemas/com.snowplowanalytics.self-desc/schema/jsonschema/1-0-0#",
+	"description": "Schema for Sample Input",
+	"self": {
+		"vendor": "com.patrick-cloud",
+		"name": "sample_input",
+		"format": "jsonschema",
+		"version": "1-0-0"
+	},
+	"type": "object",
+	"properties": {
+		"sampleInput": {
+			"type": "string"
+		}
+	},
+	"required": ["sampleInput"],
+	"additionalProperties": false
+}

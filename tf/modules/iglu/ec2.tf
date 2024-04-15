@@ -14,7 +14,9 @@ module "service" {
 
   min_size   = var.min_size
   max_size   = var.max_size
+
   subnet_ids = var.subnet_ids
+  associate_public_ip_address = false
 
   health_check_type = "ELB"
 
