@@ -1,5 +1,8 @@
 module "transformer_wrp" {
-  source = "snowplow-devops/transformer-kinesis-ec2/aws"
+  # source = "snowplow-devops/transformer-kinesis-ec2/aws"
+  # version = 0.4.1
+  source = "git::https://github.com/snowplow-devops/terraform-aws-transformer-kinesis-ec2.git?ref=f1c8b3f89c17a78de495a4d03a571b460148c66f"
+
 
   accept_limited_use_license = true
   telemetry_enabled          = false

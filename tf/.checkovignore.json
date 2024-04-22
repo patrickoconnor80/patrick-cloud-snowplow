@@ -1,0 +1,37 @@
+{
+  "CKV_AWS_18": {
+    "Name": "Ensure the S3 bucket has access logging enabled",
+    "Reason": "Access logging not necessary",
+    "Severity": "MEDIUM"
+  },
+  "CKV2_AWS_62": {
+    "Name": "Ensure S3 buckets should have event notifications enabled",
+    "Reason": "Event Notification not necessary",
+    "Severity": "LOW"
+  },
+  "CKV_AWS_109": {
+    "Name": "Ensure IAM policies does not allow permissions management / resource exposure without constraints",
+    "Reason": "Admin access given to Terraform Deployer",
+    "Severity": "LOW"
+  },
+  "CKV_AWS_144": {
+    "Name": "Ensure that S3 bucket has cross-region replication enabled",
+    "Reason": "Cross region replication not needed",
+    "Severity": "LOW"
+  },
+  "CKV_AWS_356": {
+    "Name": "Ensure no IAM policies documents allow '*' as a statement's resource for restrictable actions",
+    "Reason": "KMS Key access policies use '*' as resource",
+    "Severity": "LOW"
+  },
+  "CKV_AWS_111": {
+    "Name": "Ensure IAM policies does not allow write access without constraints",
+    "Reason": "Admin access given to Terraform Deployer",
+    "Severity": "LOW"
+  },
+  "CKV_AWS_338": {
+    "Name": "Ensure CloudWatch log groups retains logs for at least 1 year",
+    "Reason": "1 year is not necessary for this project",
+    "Severity": "LOW"
+  }
+}

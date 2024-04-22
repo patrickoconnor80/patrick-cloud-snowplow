@@ -1,6 +1,7 @@
 module "enrich_kinesis" {
-  source  = "snowplow-devops/enrich-kinesis-ec2/aws"
-  version = "0.5.3"
+  # source  = "snowplow-devops/enrich-kinesis-ec2/aws"
+  # version = "0.5.3"
+  source = "git::https://github.com/snowplow-devops/terraform-aws-enrich-kinesis-ec2.git?ref=5a133a4d4930cc8a0156b497fac69db6958dacfd"
 
   name                 = "${local.prefix}-snowplow-enrich-server"
   vpc_id               = data.aws_vpc.this.id

@@ -31,3 +31,9 @@ resource "aws_iam_role_policy_attachment" "this" {
   role       = data.aws_iam_role.snowplow_iglu.name
   policy_arn = aws_iam_policy.this.arn
 }
+
+# Policy found at patrick-cloud-snowplow/tf/modules/iglu/cloudwatch.tf:aws_iam_policy.kms_decrypt_cloudwatch
+resource "aws_iam_role_policy_attachment" "kms_decrypt_cloudwatch" {
+  role       = data.aws_iam_role.snowplow_iglu.name
+  policy_arn = aws_iam_policy.kms_decrypt_cloudwatch.arn
+}

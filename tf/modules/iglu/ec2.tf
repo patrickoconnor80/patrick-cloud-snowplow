@@ -1,6 +1,7 @@
 module "service" {
-  source  = "snowplow-devops/service-ec2/aws"
-  version = "0.2.1"
+  # source  = "snowplow-devops/service-ec2/aws"
+  # version = "0.2.1"
+  source = "git::https://github.com/snowplow-devops/terraform-aws-service-ec2.git?ref=ea38577ac9c2bbaddb6318428d1b81c8a091a817"
 
   user_supplied_script = local.user_data
   name                 = "${var.prefix}-${var.name}"

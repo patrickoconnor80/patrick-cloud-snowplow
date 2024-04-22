@@ -44,6 +44,22 @@ data "aws_secretsmanager_secret_version" "databricks_token" {
   secret_id = data.aws_secretsmanager_secret.databricks_token.id
 }
 
+data "aws_secretsmanager_secret" "databricks_sql_endpoint" {
+  name = "DATABRICKS_SQL_ENDPOINT"
+}
+
+data "aws_secretsmanager_secret_version" "databricks_sql_endpoint" {
+  secret_id = data.aws_secretsmanager_secret.databricks_sql_endpoint.id
+}
+
+data "aws_secretsmanager_secret" "databricks_host" {
+  name = "DATABRICKS_HOST"
+}
+
+data "aws_secretsmanager_secret_version" "databricks_host" {
+  secret_id = data.aws_secretsmanager_secret.databricks_host.id
+}
+
 data "aws_sns_topic" "email" {
   name = "${local.prefix}-email-sns"
 }

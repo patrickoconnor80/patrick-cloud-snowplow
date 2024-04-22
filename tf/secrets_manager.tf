@@ -1,10 +1,10 @@
 ## SECRET - SNOWPLOW_IGLU_RDS_PASSWORD ##
 
 resource "aws_secretsmanager_secret" "rds_password" {
-  name = "SNOWPLOW_IGLU_RDS_PASSWORD"
-  policy data.aws_iam_policy_document.secrets_policy.json
+  name       = "SNOWPLOW_IGLU_RDS_PASSWORD"
+  policy     = data.aws_iam_policy_document.secrets_policy.json
   kms_key_id = aws_kms_key.secrets.key_id
-  tags = local.tags
+  tags       = local.tags
 }
 
 resource "aws_secretsmanager_secret_version" "rds_password" {
@@ -16,10 +16,10 @@ resource "aws_secretsmanager_secret_version" "rds_password" {
 ## SECRET - SNOWPLOW_IGLU_SUPER_API_KEY ##
 
 resource "aws_secretsmanager_secret" "super_api_key" {
-  name = "SNOWPLOW_IGLU_SUPER_API_KEY"
-  policy data.aws_iam_policy_document.secrets_policy.json
+  name       = "SNOWPLOW_IGLU_SUPER_API_KEY"
+  policy     = data.aws_iam_policy_document.secrets_policy.json
   kms_key_id = aws_kms_key.secrets.key_id
-  tags = local.tags
+  tags       = local.tags
 }
 
 resource "aws_secretsmanager_secret_version" "super_api_key" {
@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "secrets_kms_policy" {
     ]
     resources = ["*"]
   }
-    
+
   statement {
     sid    = "AdminAccessToKMS"
     effect = "Allow"

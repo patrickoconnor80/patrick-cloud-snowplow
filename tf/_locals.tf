@@ -1,12 +1,12 @@
 locals {
-  prefix                          = "patrick-cloud-${var.env}"
-  public_subnet_ids               = [for subnet in data.aws_subnet.public : subnet.id]
-  private_subnet_ids              = [for subnet in data.aws_subnet.private : subnet.id]
-  sqs_queue_name = "${local.prefix}-snowplow-db-loader.fifo"
-  sns_topic_name = "${local.prefix}-snowplow-monitoring-sns"
-  ssh_ip_allowlist                = [format("%s/%s", data.external.whatismyip.result["internet_ip"], 32)]
-  min_size                        = 0
-  max_size                        = 1
+  prefix             = "patrick-cloud-${var.env}"
+  public_subnet_ids  = [for subnet in data.aws_subnet.public : subnet.id]
+  private_subnet_ids = [for subnet in data.aws_subnet.private : subnet.id]
+  sqs_queue_name     = "${local.prefix}-snowplow-db-loader.fifo"
+  sns_topic_name     = "${local.prefix}-snowplow-monitoring-sns"
+  ssh_ip_allowlist   = [format("%s/%s", data.external.whatismyip.result["internet_ip"], 32)]
+  min_size           = 0
+  max_size           = 1
   tags = {
     env        = var.env
     project    = "patrick-cloud"

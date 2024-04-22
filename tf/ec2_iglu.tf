@@ -1,6 +1,7 @@
 module "iglu_rds" {
-  source  = "snowplow-devops/rds/aws"
-  version = "0.4.0"
+  # source  = "snowplow-devops/rds/aws"
+  # version = "0.4.0"
+  source = "git::https://github.com/snowplow-devops/terraform-aws-rds.git?ref=a4a0466e2ed99ad3bc6205264c1012ced0b3dce4"
 
   name        = "${local.prefix}-iglu-rds"
   vpc_id      = data.aws_vpc.this.id

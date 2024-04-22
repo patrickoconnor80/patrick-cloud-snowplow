@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "this" {
 resource "aws_s3_bucket_ownership_controls" "this" {
   bucket = aws_s3_bucket.this.id
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
@@ -25,7 +25,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = aws_kms_key.s3_bucket.arn
     }
   }
 }
@@ -39,6 +40,40 @@ resource "aws_s3_bucket_public_access_block" "this" {
   depends_on              = [aws_s3_bucket.this]
 }
 
+resource "aws_s3_bucket_versioning" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  rule {
+    id     = "log"
+    status = "Enabled"
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+
+    expiration {
+      days = 365
+    }
+
+    transition {
+      days          = 30
+      storage_class = "STANDARD_IA"
+    }
+
+    transition {
+      days          = 60
+      storage_class = "GLACIER"
+    }
+  }
+}
+
 
 ## BUCKET POLICY ##
 
@@ -49,64 +84,64 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 data "aws_iam_policy_document" "bucket_policy" {
-      statement {
-        sid    = "ReadBucketMetadata"
-        effect = "Allow"
-        principals {
-          type        = "AWS"
-          identifiers = [
-            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-db-loader-server",
-            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-transformer-server-wrp"
-          ]
-        }
-        actions = [
-          "s3:ListBucket"
-        ]
-        resources = [aws_s3_bucket.this.arn]
-      }
+  statement {
+    sid    = "ReadBucketMetadata"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-db-loader-server",
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-transformer-server-wrp"
+      ]
+    }
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = [aws_s3_bucket.this.arn]
+  }
 
-      statement {
-        sid    = "ReadContentsFromBucket"
-        effect = "Allow"
-        principals {
-          type = "AWS"
-          identifiers = [
-            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-db-loader-server",
-            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-transformer-server-wrp"
-          ]
-        }
-        actions = [
-          "s3:GetObject",
-          "s3:GetObjectAcl"
-        ]
-        resources = ["${aws_s3_bucket.this.arn}/transformed/*"]
-      }
+  statement {
+    sid    = "ReadContentsFromBucket"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-db-loader-server",
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-transformer-server-wrp"
+      ]
+    }
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectAcl"
+    ]
+    resources = ["${aws_s3_bucket.this.arn}/transformed/*"]
+  }
 
-      statement {
-        sid    = "WriteToBucket"
-        effect = "Allow"
-        principals {
-          type        = "AWS"
-          identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-transformer-server-wrp"]
-        }
-        actions = [
-          "s3:PutObject",
-          "s3:PutObjectAcl",
-          "s3:DeleteObject"
-        ]
-        resources = ["${aws_s3_bucket.this.arn}/transformed/*"]
-      }
+  statement {
+    sid    = "WriteToBucket"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-transformer-server-wrp"]
+    }
+    actions = [
+      "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:DeleteObject"
+    ]
+    resources = ["${aws_s3_bucket.this.arn}/transformed/*"]
+  }
 
-      statement {
-        sid    = "AdminAccessToBucket"
-        effect = "Allow"
-        principals {
-          type        = "AWS"
-          identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
-        }
-        actions = ["s3:*"]
-        resources = ["${aws_s3_bucket.this.arn}/*","${aws_s3_bucket.this.arn}"]
-      }
+  statement {
+    sid    = "AdminAccessToBucket"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions   = ["s3:*"]
+    resources = ["${aws_s3_bucket.this.arn}/*", "${aws_s3_bucket.this.arn}"]
+  }
 }
 
 
@@ -135,12 +170,13 @@ data "aws_iam_policy_document" "s3_kms_policy" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-transformer-server-wrp",
-        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-db-loader-server"
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-db-loader-server",
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-snowplow-db-loader-server-sts-credentials"
       ]
     }
     actions = [
       "kms:Decrypt",
-      "kms:GenerateDatKey"
+      "kms:GenerateDataKey"
     ]
     resources = ["*"]
   }

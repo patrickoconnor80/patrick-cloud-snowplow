@@ -1,5 +1,7 @@
 module "db_loader" {
-  source = "snowplow-devops/databricks-loader-ec2/aws"
+  # source = "snowplow-devops/databricks-loader-ec2/aws"
+  # version = 0.2.1
+  source = "git::https://github.com/snowplow-devops/terraform-aws-databricks-loader-ec2.git?ref=036344c9313fbccd1584a2f23aa54b3b69cf7cc1"
 
   accept_limited_use_license = true
   telemetry_enabled          = false
@@ -12,9 +14,9 @@ module "db_loader" {
 
   deltalake_catalog             = "snowplow"
   deltalake_schema              = "atomic"
-  deltalake_host                = var.deltalake_host
+  deltalake_host                = data.aws_secretsmanager_secret_version.databricks_host.secret_string
   deltalake_port                = "443"
-  deltalake_http_path           = var.deltalake_http_path
+  deltalake_http_path           = data.aws_secretsmanager_secret_version.databricks_sql_endpoint.secret_string
   deltalake_auth_token          = data.aws_secretsmanager_secret_version.databricks_token.secret_string
   databricks_aws_s3_bucket_name = aws_s3_bucket.this.id
 
